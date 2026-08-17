@@ -137,18 +137,20 @@ tbl_uvregression(
 	nlsy,
 	x = sex_cat,
 	include = c(
-		nsibs, sleep_wkdy,
-		sleep_wknd, income
+		nsibs, sleep_wkdy, sleep_wknd, income
 	),
 	method = lm
 )
+## this is equivalent to
+# lm(nsibs ~ sex_cat, data = nlsy)
+# lm(sleep_wkdy ~ sex_cat, data = nlsy)
+# lm(sleep_wknd ~ sex_cat, data = nlsy)
+# lm(income ~ sex_cat, data = nlsy)
 
 #4. Poisson regression
 
-poisson_model <- glm(
-	nsibs ~ sex_cat + race_eth_cat + age_bir,
-	data = nlsy,
-	family = poisson()
+poisson_model <- glm(nsibs ~ eyesight_cat + sex_cat + income,
+										 data = nlsy, family = poisson()
 )
 
 tbl_regression(
@@ -156,67 +158,69 @@ tbl_regression(
 	exponentiate = TRUE,
 	label = list(
 		sex_cat ~ "Sex",
-		race_eth_cat ~ "Race/ethnicity",
-		age_bir ~ "Age at first birth"
+		eyesight_cat ~ "Eyesight",
+		income ~ "Income (USD)"
 	)
 )
+
 
 #5. risk ratios
-riskratio_model <- glm(
-	glasses ~ eyesight_cat + sex_cat,
-	data = nlsy,
-	family = binomial(link = "log")
-)
-
-tbl_regression(
-	riskratio_model,
-	exponentiate = TRUE,
-	label = list(
-		eyesight_cat ~ "Eyesight",
-		sex_cat ~ "Sex"
-	)
-)
 
 #6.Make a table comparing the logistic and the log-binomial results.
 
-# Logistic regression
-logistic_model <- glm(
-	glasses ~ eyesight_cat + sex_cat,
-	data = nlsy,
-	family = binomial()
+
+# log-binomial model
+logbinomial_model <- glm(glasses ~ eyesight_cat + sex_cat,
+												 data = nlsy, family = binomial(link = "log")
 )
 
-# Log-binomial regression
-riskratio_model <- glm(
-	glasses ~ eyesight_cat + sex_cat,
-	data = nlsy,
-	family = binomial(link = "log")
-)
-
-# Logistic regression table
-tbl_logistic <- tbl_regression(
+logistic_table <- tbl_regression(
 	logistic_model,
 	exponentiate = TRUE,
 	label = list(
-		eyesight_cat ~ "Eyesight",
-		sex_cat ~ "Sex"
+		sex_cat ~ "Sex",
+		eyesight_cat ~ "Eyesight"
 	)
 )
 
-# Log-binomial regression table
-tbl_riskratio <- tbl_regression(
-	riskratio_model,
+logbinomial_table <- tbl_regression(
+	logbinomial_model,
 	exponentiate = TRUE,
 	label = list(
-		eyesight_cat ~ "Eyesight",
-		sex_cat ~ "Sex"
+		sex_cat ~ "Sex",
+		eyesight_cat ~ "Eyesight"
 	)
 )
 
-tbl_merge(
-	list(tbl_logistic, tbl_riskratio),
-	tab_spanner = c(
-		"**Logistic Regression (OR)**",
-		"**Log-Binomial Regression (RR)**"
+tbl_merge(list(logistic_table, logbinomial_table),
+					tab_spanner = c("**Logistic**", "**Log-binomial**")
+)
+
+## BONUS
+
+logpoisson_model <- glm(glasses ~ eyesight_cat + sex_cat,
+												data = nlsy, family = poisson()
+)
+
+logpoisson_table <- tbl_regression(
+	logpoisson_model,
+	exponentiate = TRUE,
+	label = list(
+		sex_cat ~ "Sex",
+		eyesight_cat ~ "Eyesight"
 	)
+)
+
+logpoisson_table_robust <- tbl_regression(
+	logpoisson_model,
+	exponentiate = TRUE,
+	label = list(
+		sex_cat ~ "Sex",
+		eyesight_cat ~ "Eyesight"
+	),
+	tidy_fun = partial(tidy_robust, vcov = "HC1")
+)
+
+tbl_merge(list(logpoisson_table, logpoisson_table_robust),
+					tab_spanner = c("**W/o**", "**W/ Robust**")
 )
