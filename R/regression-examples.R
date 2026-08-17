@@ -131,4 +131,92 @@ tbl_merge(list(tbl_no_int, tbl_int),
   tab_spanner = c("**Model 1**", "**Model 2**")
 )
 
+#3.
 
+tbl_uvregression(
+	nlsy,
+	x = sex_cat,
+	include = c(
+		nsibs, sleep_wkdy,
+		sleep_wknd, income
+	),
+	method = lm
+)
+
+#4. Poisson regression
+
+poisson_model <- glm(
+	nsibs ~ sex_cat + race_eth_cat + age_bir,
+	data = nlsy,
+	family = poisson()
+)
+
+tbl_regression(
+	poisson_model,
+	exponentiate = TRUE,
+	label = list(
+		sex_cat ~ "Sex",
+		race_eth_cat ~ "Race/ethnicity",
+		age_bir ~ "Age at first birth"
+	)
+)
+
+#5. risk ratios
+riskratio_model <- glm(
+	glasses ~ eyesight_cat + sex_cat,
+	data = nlsy,
+	family = binomial(link = "log")
+)
+
+tbl_regression(
+	riskratio_model,
+	exponentiate = TRUE,
+	label = list(
+		eyesight_cat ~ "Eyesight",
+		sex_cat ~ "Sex"
+	)
+)
+
+#6.Make a table comparing the logistic and the log-binomial results.
+
+# Logistic regression
+logistic_model <- glm(
+	glasses ~ eyesight_cat + sex_cat,
+	data = nlsy,
+	family = binomial()
+)
+
+# Log-binomial regression
+riskratio_model <- glm(
+	glasses ~ eyesight_cat + sex_cat,
+	data = nlsy,
+	family = binomial(link = "log")
+)
+
+# Logistic regression table
+tbl_logistic <- tbl_regression(
+	logistic_model,
+	exponentiate = TRUE,
+	label = list(
+		eyesight_cat ~ "Eyesight",
+		sex_cat ~ "Sex"
+	)
+)
+
+# Log-binomial regression table
+tbl_riskratio <- tbl_regression(
+	riskratio_model,
+	exponentiate = TRUE,
+	label = list(
+		eyesight_cat ~ "Eyesight",
+		sex_cat ~ "Sex"
+	)
+)
+
+tbl_merge(
+	list(tbl_logistic, tbl_riskratio),
+	tab_spanner = c(
+		"**Logistic Regression (OR)**",
+		"**Log-Binomial Regression (RR)**"
+	)
+)
