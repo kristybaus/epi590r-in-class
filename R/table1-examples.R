@@ -81,4 +81,64 @@ tbl_summary(
   # add a caption
   modify_caption("**Participant characteristics**")
 
+#3. Make a tbl_summary(). Include categorical region, race/ethnicity, income,
+#and the sleep variables (use a helper function to select those) and make sure
+#they are nicely labeled.
+
+tbl_summary(nlsy,
+	include = c(region_cat,race_eth_cat,income, starts_with("sleep")),
+	by = sex_cat,
+	label = list(
+		region_cat ~ "Region",
+		race_eth_cat ~ "Race/ethnicity",
+		income ~ "Income",
+		sleep_wkdy ~ "Weekday sleep",
+		sleep_wknd ~ "Weekend sleep"
+	))|>
+add_p(test = list(
+	all_continuous() ~ "t.test",
+	all_categorical() ~ "chisq.test"
+)) |>
+	add_overall(col_label = "**Total** N = {N}") |>
+	bold_labels()
+
+#4. Stratify the table by sex. Add a p-value comparing the sexes and an overall
+#column combining both sexes.
+
+
+
+#5. For the income variable, show the 10th and 90th percentiles of income with 3
+#digits, and for the sleep variables, show the min and the max with 1 digit.
+
+tbl_summary(nlsy,
+						include = c(region_cat,race_eth_cat,income, starts_with("sleep")),
+						by = sex_cat,
+						digits = list(income ~ 3,
+													starts_with("sleep")~1
+													),
+						statistic = list(
+							income ~ "{p10}, {p90}",
+							starts_with("sleep") ~ "{min}, {max}"
+						),
+						label = list(
+							region_cat ~ "Region",
+							race_eth_cat ~ "Race/ethnicity",
+							income ~ "Income",
+							sleep_wkdy ~ "Weekday sleep",
+							sleep_wknd ~ "Weekend sleep"
+						))|>
+	add_p(test = list(
+		all_continuous() ~ "t.test",
+		all_categorical() ~ "chisq.test"
+	)) |>
+	add_overall(col_label = "**Total** N = {N}") |>
+	modify_footnote_body(
+		footnote = "https://www.nlsinfo.org/content/cohorts/nlsy79/topical-guide/household/race-ethnicity-immigration-data",
+		columns = "label",
+		rows = variable == "race_eth_cat" & row_type == "label"
+	)
+
+#6. Add a footnote to the race/ethnicity variable with a link to the page
+#describing how NLSY classified participants:
+#https://www.nlsinfo.org/content/cohorts/nlsy79/topical-guide/household/race-ethnicity-immigration-data
 
