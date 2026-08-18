@@ -34,14 +34,19 @@ We’re using some data from the **National Longitudinal Survey of Youth 1979**,
 - bullet 2
 
 ```{r}
+#| label: tbl-nlsy-summary
+#| tbl-cap: "Summary of NLSY participant characteristics by sex"
 tbl_summary(
   nlsy,
   by = sex_cat,
   include = c(sex_cat, race_eth_cat, region_cat,
               eyesight_cat, glasses, age_bir))
 ```
+@tbl-nlsy-summary presents a summary of demographic and health characteristics of NLSY participants by sex.
 
 ```{r}
+#| label: tbl-nlsy-characteristics-labeled
+#| tbl-cap: "Characteristics of NLSY participants by sex with descriptive variable labels"
 tbl_summary(
   nlsy,
   by = sex_cat,
@@ -56,13 +61,69 @@ tbl_summary(
   ),
   missing_text = "Missing")
 ```
+@tbl-nlsy-characteristics-labeled summarizes the demographic and health characteristics of NLSY participants by sex, with descriptive variable labels and missing values displayed.
 
 ##table
 
 ```{r}
+#| label: tbl-nlsy-characteristics
+#| tbl-cap: "Characteristics of NLSY participants by sex"
 tbl_summary(
   nlsy,
   by = sex_cat,
   include = c(sex_cat, race_eth_cat, region_cat,
               eyesight_cat, glasses, age_bir))
 ```
+@tbl-nlsy-characteristics summarizes the demographic and health characteristics of NLSY participants by sex.
+```{r}
+#| label: tbl-sleep-summary
+#| tbl-cap: "Characteristics of NLSY participants"
+
+tbl_summary(
+  nlsy,
+  include = c(sex_cat, race_eth_cat, sleep_wkdy, sleep_wknd),
+  label = list(
+    sex_cat ~ "Sex",
+    race_eth_cat ~ "Race/ethnicity",
+    sleep_wkdy ~ "Weekday sleep",
+    sleep_wknd ~ "Weekend sleep"
+  )
+)
+
+```
+@tbl-sleep-summary shows the descriptive statistics for weekend sleep among NLSY participants.
+
+```{r}
+##sleep_table$table_body
+inline_text(sleep_table, variable = "sleep_wknd",
+						 column = "stat_0")
+```
+In the sample the average sleep on weekends was `r inline_text(sleep_table, variable = "sleep_wknd",column = "stat_0")`
+
+```{r}
+median_sleep <- median(nlsy$sleep_wknd, na.rm = TRUE)
+```
+
+The median number of hours of sleep on weekends was `r median_sleep` hours.
+
+The median number of hours of sleep on weekends was `r median(nlsy$sleep_wknd, na.rm = TRUE)` hours.
+
+```{r}
+sleep_table <- tbl_summary(
+  nlsy,
+  include = sleep_wknd
+)
+```
+
+The median number of hours of sleep on weekends was `r inline_text(sleep_table, variable = sleep_wknd, pattern = "{median}")` hours.
+
+```{r}
+sleep_table <- tbl_summary(
+  nlsy,
+  include = c(sleep_wkdy, sleep_wknd),
+  statistic = all_continuous() ~ "{median} ({p25}, {p75})"
+)
+```
+
+
+
