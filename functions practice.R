@@ -11,3 +11,23 @@ square(x)
 square(53)
 53^2 # does this match?
 
+#raise function
+raise <- function(x, power) {
+	val <- x^power
+	return(val)
+}
+
+# test with
+raise(x = 2, power = 4)
+# should give you
+2^4
+
+raise <- function(x, power = 2) {
+	val <- x^power
+	return(val)
+}
+
+# test
+raise(x = 5)
+# should give you
+5^2
