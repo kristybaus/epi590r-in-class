@@ -29,10 +29,6 @@ nlsy <- read_csv(here::here("data", "raw", "nlsy.csv"),
 
 We’re using some data from the **National Longitudinal Survey of Youth 1979**, a cohort of American young adults aged 14-22 at enrollment in 1979. They continue to be followed to this day, and there is a wealth of publicly available data online. I’ve downloaded the answers to a survey question about whether respondents wear glasses, a scale about their eyesight with glasses, their (NLSY-assigned 😒) race/ethnicity, their sex (presumably at birth, but unclear), their family’s income in 1979, and their age at the birth of their first child.
 
-- bullet 1
-
-- bullet 2
-
 ```{r}
 #| label: tbl-nlsy-summary
 #| tbl-cap: "Summary of NLSY participant characteristics by sex"
@@ -42,6 +38,7 @@ tbl_summary(
   include = c(sex_cat, race_eth_cat, region_cat,
               eyesight_cat, glasses, age_bir))
 ```
+
 @tbl-nlsy-summary presents a summary of demographic and health characteristics of NLSY participants by sex.
 
 ```{r}
@@ -61,9 +58,10 @@ tbl_summary(
   ),
   missing_text = "Missing")
 ```
+
 @tbl-nlsy-characteristics-labeled summarizes the demographic and health characteristics of NLSY participants by sex, with descriptive variable labels and missing values displayed.
 
-##table
+##table practice
 
 ```{r}
 #| label: tbl-nlsy-characteristics
@@ -74,7 +72,9 @@ tbl_summary(
   include = c(sex_cat, race_eth_cat, region_cat,
               eyesight_cat, glasses, age_bir))
 ```
+
 @tbl-nlsy-characteristics summarizes the demographic and health characteristics of NLSY participants by sex.
+
 ```{r}
 #| label: tbl-sleep-summary
 #| tbl-cap: "Characteristics of NLSY participants"
@@ -91,14 +91,8 @@ tbl_summary(
 )
 
 ```
-@tbl-sleep-summary shows the descriptive statistics for weekend sleep among NLSY participants.
 
-```{r}
-##sleep_table$table_body
-inline_text(sleep_table, variable = "sleep_wknd",
-						 column = "stat_0")
-```
-In the sample the average sleep on weekends was `r inline_text(sleep_table, variable = "sleep_wknd",column = "stat_0")`
+@tbl-sleep-summary shows the descriptive statistics for weekend sleep among NLSY participants.
 
 ```{r}
 median_sleep <- median(nlsy$sleep_wknd, na.rm = TRUE)
@@ -125,5 +119,15 @@ sleep_table <- tbl_summary(
 )
 ```
 
+```{r}
+##sleep_table$table_body
+inline_text(sleep_table, variable = "sleep_wknd",
+						 column = "stat_0", pattern = "{median}, IQR = [{p25}, {p75}]")
+```
 
+In the sample the average sleep on weekends was `r inline_text(sleep_table, variable = "sleep_wknd",column = "stat_0", pattern = "{median}, IQR = [{p25}, {p75}]")`
+
+```{r}
+
+```
 
