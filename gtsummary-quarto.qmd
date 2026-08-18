@@ -127,7 +127,5 @@ inline_text(sleep_table, variable = "sleep_wknd",
 
 In the sample the average sleep on weekends was `r inline_text(sleep_table, variable = "sleep_wknd",column = "stat_0", pattern = "{median}, IQR = [{p25}, {p75}]")`
 
-```{r}
 
-```
 
